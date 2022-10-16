@@ -7,26 +7,25 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:testapiapp/const/customtext-style.dart';
-import 'package:testapiapp/model/blog_model.dart';
 import 'package:testapiapp/service/custom_http.dart';
 import 'package:testapiapp/toast/toast_message.dart';
 
-class updatePage extends StatefulWidget {
-  updatePage({super.key, required this.data});
-
-  Data data;
+class Storeblogdata extends StatefulWidget {
+  Storeblogdata({
+    super.key,
+  });
 
   @override
-  State<updatePage> createState() => _EditcategoryState();
+  State<Storeblogdata> createState() => _EditcategoryState();
 }
 
-class _EditcategoryState extends State<updatePage> {
-  TextEditingController? titleController;
-  TextEditingController? subtitleController;
-  TextEditingController? slugController;
-  TextEditingController? desController;
-  TextEditingController? categoryidController;
-  TextEditingController? dateController;
+class _EditcategoryState extends State<Storeblogdata> {
+  TextEditingController titleController = TextEditingController();
+  TextEditingController subtitleController = TextEditingController();
+  TextEditingController slugController = TextEditingController();
+  TextEditingController desController = TextEditingController();
+  TextEditingController categoryidController = TextEditingController();
+  TextEditingController dateController = TextEditingController();
 
   final _formkey = GlobalKey<FormState>();
 
@@ -58,13 +57,6 @@ class _EditcategoryState extends State<updatePage> {
   @override
   void initState() {
     // TODO: implement initState
-
-    titleController = TextEditingController(text: widget.data.title);
-    subtitleController = TextEditingController(text: widget.data.subTitle);
-    slugController = TextEditingController(text: widget.data.slug);
-    desController = TextEditingController(text: widget.data.description);
-    categoryidController = TextEditingController(text: widget.data.categoryId);
-    dateController = TextEditingController(text: widget.data.date);
   }
 
   @override
@@ -287,10 +279,10 @@ class _EditcategoryState extends State<updatePage> {
                     ),
                     child: TextButton(
                       onPressed: () {
-                        updateCategory();
+                        addBlogdata();
                       },
                       child: Text(
-                        'Update category',
+                        'Store',
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 15,
@@ -319,29 +311,26 @@ class _EditcategoryState extends State<updatePage> {
             OutlineInputBorder(borderRadius: BorderRadius.circular(10)));
   }
 
-  Future updateCategory() async {
+  Future addBlogdata() async {
     try {
       var uri = Uri.parse(
-          'https://apitest.hotelsetting.com/api/admin/blog-news/update/${widget.data.id}');
+          'https://apitest.hotelsetting.com/api/admin/blog-news/store');
 
       var request = http.MultipartRequest('POST', uri);
 
       request.headers.addAll(await CustomHttp().getheadersWithToken());
 
-      request.fields['category_id'] = categoryidController!.text.toString();
-      request.fields['title'] = titleController!.text.toString();
-      request.fields['sub_title'] = subtitleController!.text.toString();
-      request.fields['slug'] = subtitleController!.text.toString();
-      request.fields['description'] = desController!.text.toString();
-      request.fields['date'] = dateController!.text.toString();
+      request.fields['category_id'] = titleController.text.toString();
+      request.fields['title'] = titleController.text.toString();
+      request.fields['sub_title'] = titleController.text.toString();
+      request.fields['slug'] = titleController.text.toString();
+      request.fields['description'] = titleController.text.toString();
+      request.fields['date'] = titleController.text.toString();
 
-      if (image != null) {
-        var photoImage =
-            await http.MultipartFile.fromPath('image', image!.path);
-        setState(() {});
+      var photoImage = await http.MultipartFile.fromPath('image', image!.path);
+      setState(() {});
 
-        request.files.add(photoImage);
-      }
+      request.files.add(photoImage);
 
       setState(() {
         isProgress = true;
@@ -353,11 +342,11 @@ class _EditcategoryState extends State<updatePage> {
       var responseData = await respons.stream.toBytes();
 
       var responsString = String.fromCharCodes(responseData);
-      print('respons Stringgggggg $responsString');
+      //  print('respons Stringgggggg $responsString');
 
       var data = jsonDecode(responsString);
 
-      print("jsondata isssssssss${data['message']}");
+      //  print("jsondata isssssssss${data['message']}");
 
       if (respons.statusCode == 200) {
         print('updated issssssssssssssss ${data}');
